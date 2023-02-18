@@ -209,6 +209,7 @@ def convert_num_to_V_grade(num):
     return dic[num]
 
 def normalization(input_set):
+    # TODO: WHAT THE FUCK ARE THESE MAGIC NUMBERS
     mu_x = 5.0428571
     sig_x = 3.079590
     mu_y = 9.8428571
