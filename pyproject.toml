@@ -18,6 +18,7 @@ seaborn = "^0.12.2"
 tensorflow = "^2.11.0"
 tensorflow-intel = "^2.11.0"
 scikit-learn = "^1.2.1"
+tensorboard = "^2.11.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
