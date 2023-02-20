@@ -230,7 +230,7 @@ def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExact
         return passCheck, outputListInString, outputListInIx
             
 """ Draw a moonboard problem on the layout"""
-def plotAProblem(stringList, title = None, key = None, save = None):    
+def plotAProblem(stringList, title = None, key = None, save = None, show = None):    
     image_file = cbook.get_sample_data(parent_wd + "/raw_data/moonboard2016Background.jpg")
     plt.rcParams["figure.figsize"] = (30,10)
     img = plt.imread(image_file)
@@ -272,7 +272,8 @@ def plotAProblem(stringList, title = None, key = None, save = None):
     if save:
         plt.savefig(key + '.jpg', dpi = 200)
     # Show the image
-    plt.show()
+    if show:
+        plt.show()
 
 def oppositehand(astring):
     if astring == "LH":
