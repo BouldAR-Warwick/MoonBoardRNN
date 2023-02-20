@@ -935,6 +935,8 @@ def handStringSeqGeneratorForAllProblem(processed_data, save_path, print_result 
 # =============================================================
 # Normalization
 # =============================================================
+# TODO: normalisation should be recalculated for the training data
+# and saved in a JSON
 def normalization(input_set):
     mu_x = 5.0428571
     sig_x = 3.079590
