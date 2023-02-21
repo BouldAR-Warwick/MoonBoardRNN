@@ -324,7 +324,10 @@ if __name__ == "__main__":
 
     for hold_str in outputListInString:
         x, y = stringToCoordiante(hold_str[:-3])
-        holds.append({"x": x, "y": y})
+        # magic numbers for normalisation. only for moonboard though so this needs changing to be proper
+        #TODO: fix magic numbers
+        holds.append({"x": (90 + 52 * x) / 665, "y": (1020 - 52 * y) / 1023})
+
 
     # dump JSON string of holds
     print(json_dumps(holds))
