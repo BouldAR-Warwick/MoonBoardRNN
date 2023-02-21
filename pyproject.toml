@@ -16,7 +16,7 @@ matplotlib = "^3.6.3"
 openpyxl = "^3.0.10"
 seaborn = "^0.12.2"
 tensorflow = "^2.11.0"
-tensorflow-intel = "^2.11.0"
+tensorflow-intel = {version = "^2.11.0", markers = "sys_platform == 'win32'"}
 scikit-learn = "^1.2.1"
 tensorboard = "^2.11.0"
 
