@@ -1,35 +1,31 @@
-from __future__ import print_function
-
 import numpy as np
 import pandas as pd
 import pickle
+from pathlib import Path
+from json import dumps as json_dumps
+import argparse
+from os import environ
+
+# Turn off tensorflow warnings
+environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
 import tensorflow as tf
 import tensorflow.keras.backend as K
-from tensorflow.keras.models import load_model, Model
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
     Dense,
-    Activation,
+    Flatten,
     Input,
     LSTM,
     Reshape,
     Lambda,
     RepeatVector,
+    Masking,
 )
 from tensorflow.keras.utils import to_categorical
 
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Activation, Dense, Flatten, LSTM, Masking
-from pathlib import Path
-
 from model_helper import *
 from DeepRouteSetHelper import *
-
-from json import dumps as json_dumps
-
-import logging
-
-tf.get_logger().setLevel(logging.FATAL)
-VERBOSE = False
 
 
 def deepRouteSet(LSTM_cell, densor, n_values, n_a, Ty=12):
@@ -112,7 +108,9 @@ def predict_and_sample(
     """
 
     # Step 1: Use your inference model to predict an output sequence given x_initializer, a_initializer and c_initializer.
-    pred = inference_model.predict([x_initializer, a_initializer, c_initializer])
+    pred = inference_model.predict(
+        [x_initializer, a_initializer, c_initializer], verbose=(1 if VERBOSE else 0)
+    )
     # Step 2: Convert "pred" into an np.array() of indices with the maximum probabilities
     indices = np.argmax(pred, axis=2)
     # Step 3: Convert indices to one-hot vectors, the shape of the results should be (Ty, n_values)
@@ -294,7 +292,7 @@ if __name__ == "__main__":
         X = normalization(input_set)["X"]
 
         # grade the move sequence
-        grade_prob = grade_model.predict(X)
+        grade_prob = grade_model.predict(X, verbose=(1 if VERBOSE else 0))
         grade_pred = grade_prob.argmax() + 4
         if VERBOSE:
             print(
