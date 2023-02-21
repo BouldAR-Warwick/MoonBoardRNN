@@ -219,9 +219,10 @@ if __name__ == "__main__":
     with open(benchmark_handString_seq_path, "rb") as f:
         benchmark_handString_seq = pickle.load(f)
     # TODO: this looks INCREDIBLY redundant, just converting values into list
-    handStringList = []
-    for key in benchmark_handString_seq.keys():
-        handStringList.append(benchmark_handString_seq[key])
+    # Removing handStringList for now
+    # handStringList = []
+    # for key in benchmark_handString_seq.keys():
+    #     handStringList.append(benchmark_handString_seq[key])
 
     # map of hold indicies to hold strings
     with open(cwd.parent / "raw_data" / "holdIx_to_holdStr", "rb") as f:
@@ -276,7 +277,7 @@ if __name__ == "__main__":
         passCheck, outputListInString, outputListInIx = sanityCheckAndOutput(
             indices,
             holdIx_to_holdStr,
-            handStringList,
+            [],     # Hand string list, ignoring for now
             printError=VERBOSE,
         )
 
@@ -315,15 +316,15 @@ if __name__ == "__main__":
                 f"Predicted grade: V{grade_prob.argmax() + 4} ({grade_prob.max():.2f})"
             )
 
-        holds = []
-
-        for hold_str in outputListInString:
-            x, y = stringToCoordiante(hold_str[:-3])
-            holds.append({"x": x, "y": y})
-
-        # dump JSON string of holds
-        print(json_dumps(holds))
-
         # TODO: check grade
         # if the grade matches the desired grade then we are done
-        generated_valid_grade = True
+        generated_valid_grade = (grade_prob.argmax() + 4) == grade
+    
+    holds = []
+
+    for hold_str in outputListInString:
+        x, y = stringToCoordiante(hold_str[:-3])
+        holds.append({"x": x, "y": y})
+
+    # dump JSON string of holds
+    print(json_dumps(holds))
