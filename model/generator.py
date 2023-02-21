@@ -183,6 +183,22 @@ def stringToCoordiante(coord_str: str):
 
 
 if __name__ == "__main__":
+    # get input arguments and check for grade
+    parser = argparse.ArgumentParser(
+        description='Generate a MoonBoard route of a given grade.')
+    parser.add_argument(
+        'grade', nargs=1, type=int,
+        help='a grade between 0 and 13 (Hueco V-scale)')
+    parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='verbose output')
+    parser.set_defaults(verbose=False)
+    args = parser.parse_args()
+
+    VERBOSE = args.verbose
+    grade = args.grade
+
     # set constants
     cwd = Path().cwd()
 
