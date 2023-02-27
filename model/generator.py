@@ -228,7 +228,7 @@ if __name__ == "__main__":
     with open(cwd.parent / "raw_data" / "holdIx_to_holdStr", "rb") as f:
         holdIx_to_holdStr = pickle.load(f)
 
-    # load feature dictionaries for grading
+    # load feature dictionaries for generating move features
     left_hold_feature_path = cwd.parent / "raw_data" / "HoldFeature2016LeftHand.csv"
     right_hold_feature_path = cwd.parent / "raw_data" / "HoldFeature2016RightHand.csv"
 
