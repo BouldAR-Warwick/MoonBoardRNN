@@ -138,14 +138,14 @@ def routeSetmodel(Tx, n_a, n_values):
     a = a0
     c = c0
     
-    # Step 1: Create empty list to append the outputs while you iterate (≈1 line)
+    # Step 1: Create empty list to append the outputs while you iterate
     outputs = []
     
     # Step 2: Loop
     for t in range(Tx):      
         # Step 2.A: select the "t"th time step vector from X. 
         x = Lambda(lambda z: z[:, t, :])(X)   
-        # Step 2.B: Use reshapor to reshape x to be (1, n_values) (≈1 line)
+        # Step 2.B: Use reshapor to reshape x to be (1, n_values)
         x = reshapor(x)  # from (?, n_values) to (?, 1, n_values)
         # Step 2.C: Perform one step of the LSTM_cell
         a, _, c = LSTM_cell(inputs = x, initial_state = [a, c])
