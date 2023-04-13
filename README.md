@@ -59,3 +59,86 @@ The layout of this website is modified from https://github.com/andrew-houghton/m
 
 ## Potential future items
 * StyleNet
+
+
+## New notes from BouldAR
+
+general advice:
+
+- when running Jupyter Notebooks remotely, be aware that many images in the output will result in very slow performance due to synchronisation with the server.
+- the `pyproject.toml` will need to be adjusted for different tensorflow environments e.g. CUDA, MAC
+
+### Project structure:
+├───`model` generation and grading model training & prediction
+│   │   `DeepRouteSetHelper.py`                   helper functions for DeepRouteSet
+│   │   `DeepRouteSetMedium_v1.h5`                model weights for deep route set TODO: whats medium?
+│   │   `DeepRouteSet_v4.ipynb`                   DeepRouteSet model training and prediction
+│   │   `Evaluate_Generated_Output_v3.ipynb`      Evaluation of GradeNet prediction of generated problems
+│   │   `GeneratedRoutes`                         
+│   │   `generator.py`                            script to generate problems of a given grade
+│   │   `GradeNet.h5`                             GradeNet model weights
+│   │   `GradeNet.ipynb`                          GradeNet model training and prediction
+│   │   `GradeNet_train_history`                  
+│   │   `MediumProblemOfDeepRouteSet_v1`          
+│   │   `MediumProblemSequenceOfDeepRouteSet_v1`  
+│   │   `model_helper.py`                         helper functions for GradeNet 
+│   │
+│   ├───`DeepRouteSet` DeepRouteSet saved model
+│   │
+│   ├───`logs` training logs
+│
+├───`out`
+│   │   `GeneratedRoutes`
+│   │   `MediumProblemOfDeepRouteSet_v1`
+│   │   `MediumProblemSequenceOfDeepRouteSet_v1`
+│   │   `ProblemOfDeepRouteSet_v1`
+│   │   `ProblemSequenceOfDeepRouteSet_v1`
+│   │
+│   ├───`DeepRouteSet_v1`
+│   │       `DeepRouteSet_v1_idX.jpg`
+│   │       `DeepRouteSet_v1_idX_predicted_style.jpg`
+│   │
+│   └───`GeneratedRoutes_v0`
+│           `genX.jpg`
+│
+├───`preprocessing` preprocessing of raw data
+│       `benchmarkNoGrade_handString_seq_X`       
+│       `benchmark_handString_seq_X`              
+│       `benchmark_nograde_move_seq_X`            
+│       `benchmark_nograde_move_seq_Y`            
+│       `benchmark_withgrade_move_seq_X`          
+│       `benchmark_withgrade_move_seq_Y`          
+│       `constants.py`                            constants used in preprocessing
+│       `dev_seq_n_12_rmrp0`                      
+│       `nonbenchmarkNoGrade_handString_seq_X`    
+│       `nonbenchmark_handString_seq_X`           
+│       `nonbenchmark_nograde_move_seq_X`         
+│       `nonbenchmark_nograde_move_seq_Y`         
+│       `nonbenchmark_withgrade_move_seq_X`       
+│       `nonbenchmark_withgrade_move_seq_Y`       
+│       `preprocessing_helper.py`                 helper functions for preprocessing
+│       `processed_data_seq`                      
+│       `processed_data_xy_mode`                  
+│       `Step1_data_preprocessing_v2.ipynb`       step 1: aasdsd
+│       `Step2_BetaMove.ipynb`                    step 2: asda
+│       `Step3_partition_train_test_set_v2.ipynb` step 3: askdkasodk
+│       `test_seq_n_12_rmrp0`                     
+│       `test_set_medium_gen_v1`                  
+│       `training_seq_n_12_rmrp0`                 
+│       `X_seq_dict_merge`                        
+│       `Y_seq_dict_merge`                        
+│
+├───`raw_data` raw data from moonboard
+│       `HoldFeature2016.csv`
+│       `HoldFeature2016LeftHand.csv`
+│       `HoldFeature2016RightHand.csv`
+│       `holdIx_to_holdStr`
+│       `holdStr_to_holdIx`
+│       `moonboard2016Background.jpg`     MoonBoard 2016 board image
+│       `MoonBoard_2016_raw.json`
+│       `MoonBoard_2016_raw_schema.json`
+│       `moonGen_scrape_2016`
+│       `moonGen_scrape_2016_cp`
+│       `moonGen_scrape_2016_fail`
+│       `moonGen_scrape_2016_final`
+│
