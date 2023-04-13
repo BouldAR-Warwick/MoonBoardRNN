@@ -4,43 +4,34 @@ Yi-Shiou Duh (allenduh@stanford.edu)
 '''
 
 import numpy as np
-import os
-import copy
+from pathlib import Path
 import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.cbook as cbook
 import re
-import tensorflow as tf
-from keras.models import load_model, Model
-from keras.layers import Dense, Activation, Input, LSTM, Reshape, Lambda, RepeatVector
-from keras import backend as K
+from tensorflow.keras.models import load_model, Model
+from tensorflow.keras.layers import Dense, Activation, Input, LSTM, Reshape, Lambda, RepeatVector
+from tensorflow.keras import backend as K
 
-cwd = os.getcwd()
-parent_wd = cwd.replace('\\', '/').replace('/model', '')
-benchmark_handString_seq_path = parent_wd + '/preprocessing/benchmark_handString_seq_X'
-benchmarkNoGrade_handString_seq_path = parent_wd + '/preprocessing/benchmarkNoGrade_handString_seq_X'
-nonbenchmark_handString_seq_path = parent_wd + '/preprocessing/nonbenchmark_handString_seq_X'
-nonbenchmarkNoGrade_handString_seq_path = parent_wd + '/preprocessing/nonbenchmarkNoGrade_handString_seq_X'
-url_data_path = parent_wd + '/raw_data/moonGen_scrape_2016_cp'
 
-with open(benchmark_handString_seq_path, 'rb') as f:
+parent_wd = Path().cwd().parent
+preprocessing = parent_wd / 'preprocessing'
+
+with open(preprocessing / 'benchmark_handString_seq_X', 'rb') as f:
     benchmark_handString_seq = pickle.load(f)
-with open(benchmarkNoGrade_handString_seq_path, 'rb') as f:
+with open(preprocessing / 'benchmarkNoGrade_handString_seq_X', 'rb') as f:
     benchmarkNoGrade_handString_seq = pickle.load(f)
-with open(nonbenchmark_handString_seq_path, 'rb') as f:
+with open(preprocessing / 'nonbenchmark_handString_seq_X', 'rb') as f:
     nonbenchmark_handString_seq = pickle.load(f)
-with open(nonbenchmarkNoGrade_handString_seq_path, 'rb') as f:
+with open(preprocessing / 'nonbenchmarkNoGrade_handString_seq_X', 'rb') as f:
     nonbenchmarkNoGrade_handString_seq = pickle.load(f)        
-with open(url_data_path, 'rb') as f:
+with open(parent_wd / 'raw_data/moonGen_scrape_2016_cp', 'rb') as f:
     MoonBoard_2016_withurl = pickle.load(f)
     
 # Feed in the hold feature.csv files
-left_hold_feature_path = parent_wd + '/raw_data/HoldFeature2016LeftHand.csv'
-right_hold_feature_path = parent_wd + '/raw_data/HoldFeature2016RightHand.csv'
-
-LeftHandfeatures = pd.read_csv(left_hold_feature_path, dtype=str)
-RightHandfeatures = pd.read_csv(right_hold_feature_path, dtype=str)
+LeftHandfeatures = pd.read_csv(parent_wd / 'raw_data/HoldFeature2016LeftHand.csv', dtype=str)
+RightHandfeatures = pd.read_csv(parent_wd / 'raw_data/HoldFeature2016RightHand.csv', dtype=str)
 # convert features from pd dataframe to dictionary of left and right hand
 RightHandfeature_dict = {}
 LeftHandfeature_dict = {}
@@ -231,7 +222,7 @@ def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExact
             
 """ Draw a moonboard problem on the layout"""
 def plotAProblem(stringList, title: str = None, name: str = None, save: bool = False, show: bool = False):    
-    image_file = cbook.get_sample_data(parent_wd + "/raw_data/moonboard2016Background.jpg")
+    image_file = cbook.get_sample_data(parent_wd / "raw_data/moonboard2016Background.jpg")
     plt.rcParams["figure.figsize"] = (30,10)
     img = plt.imread(image_file)
     x = []

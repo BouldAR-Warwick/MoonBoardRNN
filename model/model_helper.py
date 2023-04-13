@@ -1,16 +1,12 @@
 import numpy as np
-import os
-import copy
 import pickle
-import heapq
 from sklearn import metrics
 import matplotlib.pyplot as plt
 import seaborn as sn
 import pandas as pd
-import matplotlib.image as mpimg
 import matplotlib.cbook as cbook
-import re 
-import PIL
+import re
+from pathlib import Path
 
 def save_pickle(data, file_name):
     """
@@ -161,9 +157,8 @@ def compute_accuracy(y_true, y_predict):
 
 """ Draw a moonboard problem on the layout"""
 def plotAProblem(stringList, title = None, key = None):
-    cwd = os.getcwd()
-    parent_wd = cwd.replace('/model', '')
-    image_file = cbook.get_sample_data(parent_wd + "/raw_data/moonboard2016Background.jpg")
+    parent = Path().cwd().parent
+    image_file = cbook.get_sample_data(parent / "raw_data" / "moonboard2016Background.jpg")
     img = plt.imread(image_file)
     x = []
     y = []
