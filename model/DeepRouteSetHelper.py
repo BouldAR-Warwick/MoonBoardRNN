@@ -43,19 +43,30 @@ for index in RightHandfeatures.index:
     RightHandfeature_dict[(int(RightHandfeature_item['X_coord']), int(RightHandfeature_item['Y_coord']))] = np.array(
         list(RightHandfeature_item['Difficulties'])).astype(int)
 
-"""Now add more problems and add more Benchmark problem to emphasize Benchmark"""
 def collectHandStringIntoList(levelProblemList, duplicateBenchMark = 6):
-    ## Add other nonbenchmark into StringList
-    ## Need to pass throuh certain filter
-    ## 1. Can't be longer than 11 hands
-    ## 2. Be in goodProblem key list
+    """Now add more problems and add more Benchmark problem to emphasize Benchmark
+
+    Args:
+        levelProblemList: list of problems to add to training set
+        duplicateBenchMark (int, optional): Repeat any benchmarks in the set this many times. Defaults to 6.
+
+    Returns:
+        List[str]: A list of hand strings to train on
+    """    
+
+    # Add other nonbenchmark into StringList
+    # Need to pass throuh certain filter
+    # 1. Can't be longer than 11 hands
+    # 2. Be in goodProblem key list
     handStringList = []
-    levelProblemList = levelProblemList
     # Add duplicated benchMark in the training example to emphasize benchMark
+    # TODO: needs re-write, iterates over all problems and if they're in list adds them multiple times
+    # TODO: bad way to do weighted training - should instead modify the loss function
     for i in range(duplicateBenchMark):
         for key in benchmark_handString_seq.keys():
             if key in levelProblemList:
                 handStringList.append(benchmark_handString_seq[key])
+    # TODO: as filtered on levelProblemList, no ungraded problems will actually be included
     for key in benchmarkNoGrade_handString_seq.keys():
         if key in levelProblemList:
             if len(benchmarkNoGrade_handString_seq[key]) < 12:
@@ -71,12 +82,23 @@ def collectHandStringIntoList(levelProblemList, duplicateBenchMark = 6):
     return handStringList            
 
 def loadSeqXYFromString (stringList, holdStr_to_holdIx, m, numOfPossibleHolds, maxNumOfHands = 12):
-    """Input with HandSting list ['J5-LH', 'J5-RH', 'I9-LH', 'J10-RH', 'H12-RH', 'C13-LH', 'D15-LH', 'E18-RH']
-       Different training sample have different length, so padded with 0 ("End") up to maxNumOfHands
-       OutPut X, Y HandString matrix to feed in RNN
-       OutPut shape X (Training sample, Tx, numOfPossibleHolds + "End") = (numOfTrainingSample, 12, n_values)
-       OutPut shape Y (Tx, Training sample, numOfPossibleHolds + "End") = (12, numOfTrainingSample, n_values)
     """
+    Convert string sequences to X and Y matrices.
+    Different examples may be different lengths so padded with "End" (id 0) up to maxNumOfHands.
+    
+    Args:
+        stringList (_type_): HandSting list ['J5-LH', 'J5-RH', 'I9-LH', 'J10-RH', 'H12-RH', 'C13-LH', 'D15-LH', 'E18-RH']
+        holdStr_to_holdIx (_type_): _description_
+        m (_type_): _description_
+        numOfPossibleHolds (_type_): _description_
+        maxNumOfHands (int, optional): _description_. Defaults to 12.
+
+    Returns:
+        X (numOfTrainingSample, 12, n_values): X route examples using holdIDs
+        Y (12, numOfTrainingSample, n_values): adjusted X to reflect next timestep in route
+        n_values: number of possible holds (includes "End")
+    """
+    # TODO: how is Y actually different to X?
     n_values = numOfPossibleHolds + 1 # including "End"
     X = np.zeros((m, maxNumOfHands, n_values), dtype=np.bool_)
     Y = np.zeros((m, maxNumOfHands, n_values), dtype=np.bool_)
@@ -105,7 +127,7 @@ def loadSeqXYFromString (stringList, holdStr_to_holdIx, m, numOfPossibleHolds, m
 
 def routeSetmodel(Tx, n_a, n_values):
     """
-    Implement the model
+    Training model for route generation we reuse these  weights with a different network in order to generate routes
     
     Arguments:
     Tx -- length of the sequence in a corpus
@@ -115,7 +137,8 @@ def routeSetmodel(Tx, n_a, n_values):
     Returns:
     model -- a keras instance model with n_a activations
     """
-    reshapor = Reshape((1, n_values))                  
+    reshapor = Reshape((1, n_values))  
+    # TODO: the  same LSTM and dense layers are used at every time step. Does this defeat the purpose of having a sequence model? Will learn the sae weights at every step
     LSTM_cell = LSTM(n_a, return_state = True)        
     densor = Dense(n_values, activation='softmax')
     
