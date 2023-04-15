@@ -124,55 +124,7 @@ def loadSeqXYFromString (stringList, holdStr_to_holdIx, m, numOfPossibleHolds, m
     Y = np.swapaxes(Y,0,1)  # Y is different shape than X
     Y = Y.tolist()
     return np.asarray(X), np.asarray(Y), n_values 
-
-def routeSetmodel(Tx, n_a, n_values):
-    """
-    Training model for route generation we reuse these  weights with a different network in order to generate routes
-    
-    Arguments:
-    Tx -- length of the sequence in a corpus
-    n_a -- the number of activations used in our model
-    n_values -- number of unique values in the climbing move data 
-    
-    Returns:
-    model -- a keras instance model with n_a activations
-    """
-    reshapor = Reshape((1, n_values))  
-    # TODO: the  same LSTM and dense layers are used at every time step. Does this defeat the purpose of having a sequence model? Will learn the sae weights at every step
-    LSTM_cell = LSTM(n_a, return_state = True)        
-    densor = Dense(n_values, activation='softmax')
-    
-    # Define the input layer and specify the shape
-    X = Input(shape=(Tx, n_values))
-    
-    # Define the initial hidden state a0 and initial cell state c0
-    # using `Input`
-    a0 = Input(shape=(n_a,), name='a0')
-    c0 = Input(shape=(n_a,), name='c0')
-    a = a0
-    c = c0
-    
-    # Step 1: Create empty list to append the outputs while you iterate
-    outputs = []
-    
-    # Step 2: Loop
-    for t in range(Tx):      
-        # Step 2.A: select the "t"th time step vector from X. 
-        x = Lambda(lambda z: z[:, t, :])(X)   
-        # Step 2.B: Use reshapor to reshape x to be (1, n_values)
-        x = reshapor(x)  # from (?, n_values) to (?, 1, n_values)
-        # Step 2.C: Perform one step of the LSTM_cell
-        a, _, c = LSTM_cell(inputs = x, initial_state = [a, c])
-        # Step 2.D: Apply densor to the hidden state output of LSTM_Cell
-        out = densor(a)
-        # Step 2.E: add the output to "outputs"
-        outputs.append(out)
-        
-    # Step 3: Create model instance
-    model = Model(inputs = [X, a0, c0], outputs = outputs)
-    
-    return model
-            
+           
 """ Finally sanity check"""
 def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExactFromDatabase = False, printError = False):
     lastString = ""

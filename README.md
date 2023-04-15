@@ -74,14 +74,14 @@ general advice:
 │   │   `DeepRouteSetMedium_v1.h5`                model weights for deep route set TODO: whats medium?
 │   │   `DeepRouteSet_v4.ipynb`                   DeepRouteSet model training and prediction
 │   │   `Evaluate_Generated_Output_v3.ipynb`      Evaluation of GradeNet prediction of generated problems
-│   │   `GeneratedRoutes`                         
+│   │   `GeneratedRoutes`
 │   │   `generator.py`                            script to generate problems of a given grade
 │   │   `GradeNet.h5`                             GradeNet model weights
 │   │   `GradeNet.ipynb`                          GradeNet model training and prediction
-│   │   `GradeNet_train_history`                  
-│   │   `MediumProblemOfDeepRouteSet_v1`          
-│   │   `MediumProblemSequenceOfDeepRouteSet_v1`  
-│   │   `model_helper.py`                         helper functions for GradeNet 
+│   │   `GradeNet_train_history`
+│   │   `MediumProblemOfDeepRouteSet_v1`
+│   │   `MediumProblemSequenceOfDeepRouteSet_v1`
+│   │   `model_helper.py`                         helper functions for GradeNet
 │   │
 │   ├───`DeepRouteSet` DeepRouteSet saved model
 │   │
@@ -102,31 +102,31 @@ general advice:
 │           `genX.jpg`
 │
 ├───`preprocessing` preprocessing of raw data
-│       `benchmarkNoGrade_handString_seq_X`       
-│       `benchmark_handString_seq_X`              
-│       `benchmark_nograde_move_seq_X`            
-│       `benchmark_nograde_move_seq_Y`            
-│       `benchmark_withgrade_move_seq_X`          
-│       `benchmark_withgrade_move_seq_Y`          
+│       `benchmarkNoGrade_handString_seq_X`
+│       `benchmark_handString_seq_X`
+│       `benchmark_nograde_move_seq_X`
+│       `benchmark_nograde_move_seq_Y`
+│       `benchmark_withgrade_move_seq_X`
+│       `benchmark_withgrade_move_seq_Y`
 │       `constants.py`                            constants used in preprocessing
-│       `dev_seq_n_12_rmrp0`                      
-│       `nonbenchmarkNoGrade_handString_seq_X`    
-│       `nonbenchmark_handString_seq_X`           
-│       `nonbenchmark_nograde_move_seq_X`         
-│       `nonbenchmark_nograde_move_seq_Y`         
-│       `nonbenchmark_withgrade_move_seq_X`       
-│       `nonbenchmark_withgrade_move_seq_Y`       
+│       `dev_seq_n_12_rmrp0`
+│       `nonbenchmarkNoGrade_handString_seq_X`
+│       `nonbenchmark_handString_seq_X`
+│       `nonbenchmark_nograde_move_seq_X`
+│       `nonbenchmark_nograde_move_seq_Y`
+│       `nonbenchmark_withgrade_move_seq_X`
+│       `nonbenchmark_withgrade_move_seq_Y`
 │       `preprocessing_helper.py`                 helper functions for preprocessing
-│       `processed_data_seq`                      
-│       `processed_data_xy_mode`                  
+│       `processed_data_seq`
+│       `processed_data_xy_mode`
 │       `Step1_data_preprocessing_v2.ipynb`       step 1: aasdsd
 │       `Step2_BetaMove.ipynb`                    step 2: asda
 │       `Step3_partition_train_test_set_v2.ipynb` step 3: askdkasodk
-│       `test_seq_n_12_rmrp0`                     
-│       `test_set_medium_gen_v1`                  
-│       `training_seq_n_12_rmrp0`                 
-│       `X_seq_dict_merge`                        
-│       `Y_seq_dict_merge`                        
+│       `test_seq_n_12_rmrp0`
+│       `test_set_medium_gen_v1`
+│       `training_seq_n_12_rmrp0`
+│       `X_seq_dict_merge`
+│       `Y_seq_dict_merge`
 │
 ├───`raw_data` raw data from moonboard
 │       `HoldFeature2016.csv`
@@ -142,3 +142,27 @@ general advice:
 │       `moonGen_scrape_2016_fail`
 │       `moonGen_scrape_2016_final`
 │
+
+
+
+### Improvements
+
+- path portability
+- `pyproject.toml` for dependency management
+- fixed broken sections in preprocessing TODO: specify which sections
+- changed optimiser from Adam to AdamW
+  - fixes issues with weight decay
+- single script `generator.py` for generating problems of a given grade
+- fixed loss function used by gradenet for compatability with eager execution
+- TODO: model saving and loading for faster on demand route generation/grading
+- TODO: changed gradenet to use ordinal regression instead of classification
+  - this adds significant additional information to the loss function as it gives how far off the prediction is from the actual grade
+- TODO: modify deeprouteset to be compatible with generic training boards
+- TODO: modify deeprouteset to generate problems of a given grade
+  - add grade as input to model
+  - add gradenet to end of model as loss function for similarity to requested grade
+- TODO: modify betamove to generate moves from holds using an improved alogrithm
+  - currently only uses guassian around current hand positions to evaluate cost
+  - best moves are selected via beam search
+  - has been suggested to use outlier detection against a set of benchmark moves
+
