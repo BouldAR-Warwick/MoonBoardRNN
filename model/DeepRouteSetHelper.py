@@ -126,7 +126,8 @@ def loadSeqXYFromString (stringList, holdStr_to_holdIx, m, numOfPossibleHolds, m
     return np.asarray(X), np.asarray(Y), n_values 
            
 """ Finally sanity check"""
-def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExactFromDatabase = False, printError = False):
+# def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExactFromDatabase = False, printError = False):
+def sanityCheckAndOutput(indices, holdIx_to_holdStr, printError = False):
     lastString = ""
     outputListInString = []
     outputListInIx = []
@@ -185,12 +186,13 @@ def sanityCheckAndOutput(indices, holdIx_to_holdStr, handStringList, outputExact
         if printError: print("Warning: Too high start", outputListInString)
         return passCheck, outputListInString, outputListInIx
     
-    # Check is this already in database
-    for item in handStringList:
-        if set(outputListInStringSet) == set(item):
-            passCheck = outputExactFromDatabase
-            print("Same", item)
-            return passCheck, outputListInString, outputListInIx
+    # A check to see if the model has directly output a training example
+    # handStringList is a list of all training example hand strings
+    # for item in handStringList:
+    #     if set(outputListInStringSet) == set(item):
+    #         passCheck = outputExactFromDatabase
+    #         print("Same", item)
+    #         return passCheck, outputListInString, outputListInIx
     # Optional: Calculate cos similarity
     if passCheck == True:
         return passCheck, outputListInString, outputListInIx
@@ -446,6 +448,7 @@ def moveGeneratorForAllGeneratedProblem(listOfGeneratedHandSequence, save_path, 
         try:
             if oneSequence not in listOfSavedSequence:
                 countUniqueProblem = countUniqueProblem + 1
+                # TODO: do we really need to provide keys for each problem? they are all unique in arbitrary order regardless
                 keyName = keyNamePre + str(countUniqueProblem)
                 
                 movesInfoList = moveGeneratorFromStrList(oneSequence, string_mode = False)
@@ -466,8 +469,10 @@ def moveGeneratorForAllGeneratedProblem(listOfGeneratedHandSequence, save_path, 
                     x_vectors[21, orderOfMove] = moveInfoDict['MoveSuccessRate']
 
                 if print_result:
-                    print('Complete %s' %key)
-                output[keyName] = x_vectors  
+                    print("completed", keyName)
+                output[keyName] = x_vectors
+            elif print_result:
+                print('skip duplicate', oneSequence)
         except:
             print(oneSequence)
     save_pickle(output, save_path)

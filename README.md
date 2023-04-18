@@ -150,11 +150,12 @@ general advice:
 - path portability
 - `pyproject.toml` for dependency management
 - fixed broken sections in preprocessing TODO: specify which sections
-- changed optimiser from Adam to AdamW
-  - fixes issues with weight decay
+<!-- - changed optimiser from Adam to AdamW not possible without latest tensorflow 2.12  
+  - fixes issues with weight decay -->
 - single script `generator.py` for generating problems of a given grade
 - fixed loss function used by gradenet for compatability with eager execution
-- TODO: model saving and loading for faster on demand route generation/grading
+- model saving and loading for faster on demand route generation/grading
+- TODO: batch prediction, rather than iterative, greatly increased speed
 - TODO: changed gradenet to use ordinal regression instead of classification
   - this adds significant additional information to the loss function as it gives how far off the prediction is from the actual grade
 - TODO: modify deeprouteset to be compatible with generic training boards
@@ -165,4 +166,6 @@ general advice:
   - currently only uses guassian around current hand positions to evaluate cost
   - best moves are selected via beam search
   - has been suggested to use outlier detection against a set of benchmark moves
+  - see the 2023 paper for improved hold difficulty heuristics
+  - ensure that the raw data is still present for machine learning along side the added heuristics
 
