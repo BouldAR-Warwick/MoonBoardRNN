@@ -10,12 +10,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.cbook as cbook
 import re
-from tensorflow.keras.models import load_model, Model
-from tensorflow.keras.layers import Dense, Activation, Input, LSTM, Reshape, Lambda, RepeatVector
-from tensorflow.keras import backend as K
 
 
-parent_wd = Path().cwd().parent
+parent_wd = Path(__file__).parents[1]
 preprocessing = parent_wd / 'preprocessing'
 
 with open(preprocessing / 'benchmark_handString_seq_X', 'rb') as f:

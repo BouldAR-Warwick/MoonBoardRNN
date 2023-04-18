@@ -35,114 +35,32 @@ def plot_confusion_matrix(Y_true, Y_predict, title = None):
     plt.show()
     return
 
-def plot_history(history_all, model_name):
+def plot_history(history, model_name):
     """
     Plot the training history of the model
     """
     # Plot training & validation accuracy values
-    acc = []
-    val_acc = []
-    loss = []
-    val_loss = []
-    for history in history_all:
-        if 'sparse_categorical_accuracy' in history.history.keys():
-            acc.append(history.history['sparse_categorical_accuracy'])
-            val_acc.append(history.history['val_sparse_categorical_accuracy'])
-            loss.append(history.history['loss'])
-            val_loss.append(history.history['val_loss'])
-        else:
-            acc.append(history.history['accuracy'])
-            val_acc.append(history.history['val_accuracy'])
-            loss.append(history.history['loss'])
-            val_loss.append(history.history['val_loss'])
+    acc = history.history['sparse_categorical_accuracy']
+    val_acc = history.history['val_sparse_categorical_accuracy']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
 
-    acc = sum(acc, [])
-    val_acc = sum(val_acc, [])
-    loss = sum(loss, [])
-    val_loss = sum(val_loss, [])
-
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, dpi = 150)
+    _, axes = plt.subplots(nrows = 1, ncols = 2)
     axes[0].plot(acc)
     axes[0].plot(val_acc)
     axes[0].set_title('Accuracy of '+ model_name)
     axes[0].set_ylabel('Accuracy')
     axes[0].set_xlabel('Epoch')
-    axes[0].legend(['Train', 'Dev'], loc='upper left')
+    axes[0].legend(['Train', 'Val'], loc='upper left')
 
     axes[1].plot(loss)
     axes[1].plot(val_loss)
     axes[1].set_title('Loss of ' + model_name)
     axes[1].set_ylabel('Loss')
     axes[1].set_xlabel('Epoch')
-    axes[1].legend(['Train', 'Dev'], loc='upper left')
-    plt.tight_layout()
-    
-    history_package = {'acc': acc, 
-                       'val_acc': val_acc, 
-                       'loss': loss, 
-                       'val_loss': val_loss}
-    return history_package
-
-
-def plot_history_no_val(history_all, model_name):
-    """
-    Plot the training history of the model, for the ones without validation set
-    """
-    # Plot training & validation accuracy values
-    acc = []
-    loss = []
-    for history in history_all:
-        acc.append(history.history['accuracy'])
-        loss.append(history.history['loss'])
-
-    acc = sum(acc, [])
-    loss = sum(loss, [])
-
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, dpi = 150)
-    axes[0].plot(acc)
-    axes[0].set_title('Accuracy of '+ model_name)
-    axes[0].set_ylabel('Accuracy')
-    axes[0].set_xlabel('Epoch')
-    axes[0].legend(['Train'], loc='upper left')
-
-    axes[1].plot(loss)
-    axes[1].set_title('Loss of ' + model_name)
-    axes[1].set_ylabel('Loss')
-    axes[1].set_xlabel('Epoch')
-    axes[1].legend(['Train'], loc='upper left')
-    plt.tight_layout()
-    
-    history_package = {'acc': acc, 
-                       'loss': loss}
-    return history_package
-
-def plot_history_package(history_package, model_name):
-    """
-    Plot the training history of the model (from saved history package)
-    """
-    # Plot training & validation accuracy values
-    acc = history_package['acc']
-    val_acc = history_package['val_acc']
-    loss = history_package['loss']
-    val_loss = history_package['val_loss']
-
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, dpi = 150)
-    axes[0].plot(acc)
-    axes[0].plot(val_acc)
-    axes[0].set_title('Accuracy of '+ model_name)
-    axes[0].set_ylabel('Accuracy')
-    axes[0].set_xlabel('Epoch')
-    axes[0].legend(['Train', 'Dev'], loc='upper left')
-
-    axes[1].plot(loss)
-    axes[1].plot(val_loss)
-    axes[1].set_title('Loss of ' + model_name)
-    axes[1].set_ylabel('Loss')
-    axes[1].set_xlabel('Epoch')
-    axes[1].legend(['Train', 'Dev'], loc='upper left')
+    axes[1].legend(['Train', 'Val'], loc='upper left')
     plt.tight_layout()
 
-    return
 
 def compute_accuracy(y_true, y_predict):
     """

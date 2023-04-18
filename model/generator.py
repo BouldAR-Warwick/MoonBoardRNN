@@ -9,84 +9,16 @@ from os import environ
 # Turn off tensorflow warnings
 environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-import tensorflow as tf
 import tensorflow.keras.backend as K
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (
-    Dense,
-    Flatten,
-    Input,
-    LSTM,
-    Reshape,
-    Lambda,
-    RepeatVector,
-    Masking,
-)
+from tensorflow.keras.layers import RepeatVector
+from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import to_categorical
 
-from model_helper import *
-from DeepRouteSetHelper import *
+from DeepRouteSetHelper import sanityCheckAndOutput, moveGeneratorFromStrList
+from model_helper import normalization
 
 
-def deepRouteSet(LSTM_cell, densor, n_values, n_a, Ty=12):
-    """
-    Uses the trained "LSTM_cell" and "densor" from model() to generate a sequence of values.
-
-    Arguments:
-    LSTM_cell -- the trained "LSTM_cell" from model(), Keras layer object
-    densor -- the trained "densor" from model(), Keras layer object
-    n_values -- integer, number of unique values
-    n_a -- number of units in the LSTM_cell
-    Ty -- integer, number of time steps to generate
-
-    Returns:
-    inference_model -- Keras model instance
-    """
-
-    def one_hot(x):
-        x = K.argmax(x)
-        x = tf.one_hot(x, n_values)
-        x = RepeatVector(1)(x)
-        return x
-
-    # Define the input of your model with a shape
-    x0 = Input(shape=(1, n_values))
-
-    # Define s0, initial hidden state for the decoder LSTM
-    a0 = Input(shape=(n_a,), name="a0")
-    c0 = Input(shape=(n_a,), name="c0")
-    a = a0
-    c = c0
-    x = x0
-
-    ### START CODE HERE ###
-    # Step 1: Create an empty list of "outputs" to later store your predicted values (≈1 line)
-    outputs = []
-
-    # Step 2: Loop over Ty and generate a value at every time step
-    for t in range(Ty):
-
-        # Step 2.A: Perform one step of LSTM_cell (≈1 line)
-        a, _, c = LSTM_cell(x, initial_state=[a, c])
-
-        # Step 2.B: Apply Dense layer to the hidden state output of the LSTM_cell (≈1 line)
-        out = densor(a)
-
-        # Step 2.C: Append the prediction "out" to "outputs". out.shape = (None, n_values) (≈1 line)
-        outputs.append(out)
-
-        # Step 2.D:
-        # Select the next value according to "out",
-        # Set "x" to be the one-hot representation of the selected value
-        # See instructions above.
-        x = Lambda(one_hot)(out)
-
-    # Step 3: Create model instance with the correct "inputs" and "outputs" (≈1 line)
-    inference_model = Model(inputs=[x0, a0, c0], outputs=outputs)
-
-    return inference_model
-
-
+# TODO: move to DeepRouteSetHelper
 def predict_and_sample(
     inference_model,
     x_initializer,
@@ -119,41 +51,6 @@ def predict_and_sample(
     return results, indices
 
 
-# TODO: should be in separate file, currently using old output setup so compatible with saved weights
-def grade_net():
-    """Build GradeNet model and compile it."""
-    np.random.seed(0)
-    tf.random.set_seed(0)
-    inputs = Input(shape=(12, 22))
-    mask = Masking(mask_value=0.0).compute_mask(inputs)
-    lstm0 = LSTM(
-        20,
-        activation="tanh",
-        input_shape=(12, 22),
-        kernel_initializer="glorot_normal",
-        return_sequences="True",
-    )(inputs, mask=mask)
-    dense1 = Dense(100, activation="relu", kernel_initializer="glorot_normal")(lstm0)
-    dense2 = Dense(80, activation="relu", kernel_initializer="glorot_normal")(dense1)
-    dense3 = Dense(75, activation="relu", kernel_initializer="glorot_normal")(dense2)
-    dense4 = Dense(50, activation="relu", kernel_initializer="glorot_normal")(dense3)
-    dense5 = Dense(20, activation="relu", kernel_initializer="glorot_normal")(dense4)
-    dense6 = Dense(10, activation="relu", kernel_initializer="glorot_normal")(dense5)
-    flat = Flatten()(dense6)
-    softmax2 = Dense(10, activation="softmax", name="softmax2")(flat)
-    lstm1 = LSTM(
-        20, activation="tanh", kernel_initializer="glorot_normal", return_sequences=True
-    )(dense6)
-    lstm2 = LSTM(20, activation="tanh", kernel_initializer="glorot_normal")(lstm1)
-    dense7 = Dense(15, activation="relu", kernel_initializer="glorot_normal")(lstm2)
-    dense8 = Dense(15, activation="relu", kernel_initializer="glorot_normal")(dense7)
-    softmax3 = Dense(10, activation="softmax", name="softmax2")(dense8)
-
-    GradeNet = Model(inputs=[inputs], outputs=[softmax3])
-
-    return GradeNet
-
-
 # TODO: this is quick and dirty, make this into separate method
 def move_list_to_vectors(move_sequence):
     """Converts a list of moves to a vector of 22-dim moves."""
@@ -176,6 +73,7 @@ def move_list_to_vectors(move_sequence):
     return move_sequence_vectors
 
 
+# TODO: this should be imported from preprocessing.preprocessing_helper
 def stringToCoordiante(coord_str: str):
     """Convert coordinate string (e.g. "J5") to integer (9,4)"""
     coord_str = coord_str.upper()
@@ -200,17 +98,12 @@ if __name__ == "__main__":
     grade = args.grade
 
     # set constants
-    cwd = Path().cwd()
+    cwd = Path(__file__).parent
 
-    # TODO: WE SHOULD NOT BE COMPILING MODEL HERE (slow, load pre-compiled)
     # think this is number of holds?
     n_values = 278
     # num dimensions of LSTM hidden state
     n_a = 64
-    # layers
-    reshapor = Reshape((1, n_values))
-    LSTM_cell = LSTM(n_a, return_state=True)
-    densor = Dense(n_values, activation="softmax")
 
     # load magic handString list
     benchmark_handString_seq_path = (
@@ -249,17 +142,12 @@ if __name__ == "__main__":
             )
         ] = np.array(list(RightHandfeature_item["Difficulties"])).astype(int)
 
-    # create inference model
-    inference_model = deepRouteSet(LSTM_cell, densor, n_values=n_values, n_a=64, Ty=12)
-
-    # load model weights
-    inference_model.load_weights(cwd / "DeepRouteSetMedium_v1.h5")
+    # TODO: disable WARNING:tensorflow:No training configuration found in save file, so the model was *not* compiled. Compile it manually.
+    # load inference model
+    inference_model = load_model(cwd / "DeepRouteSet")
 
     # create grading model
-    grade_model = grade_net()
-
-    # load model weights
-    grade_model.load_weights(cwd / "GradeNet.h5")
+    grade_model = load_model(cwd / "GradeNet")
 
     # ===================== Begin generation and grading ======================
 
@@ -277,7 +165,7 @@ if __name__ == "__main__":
         passCheck, outputListInString, outputListInIx = sanityCheckAndOutput(
             indices,
             holdIx_to_holdStr,
-            [],     # Hand string list, ignoring for now
+            # [],     # Hand string list, ignoring for now
             printError=VERBOSE,
         )
 
@@ -313,12 +201,13 @@ if __name__ == "__main__":
         grade_pred = grade_prob.argmax() + 4
         if VERBOSE:
             print(
-                f"Predicted grade: V{grade_prob.argmax() + 4} ({grade_prob.max():.2f})"
+                f"Predicted grade: V{grade_pred} ({grade_prob.max():.2f})"
             )
 
-        # TODO: check grade
+        # TODO: check grade, for testing will return first route
         # if the grade matches the desired grade then we are done
-        generated_valid_grade = (grade_prob.argmax() + 4) == grade
+        # generated_valid_grade = grade_pred == grade 
+        generated_valid_grade = True
     
     holds = []
 
