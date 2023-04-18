@@ -5,6 +5,7 @@ from pathlib import Path
 from json import dumps as json_dumps
 import argparse
 from os import environ
+import random
 
 # Turn off tensorflow warnings
 environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -79,6 +80,10 @@ def stringToCoordiante(coord_str: str):
     coord_str = coord_str.upper()
     return (ord(coord_str[0]) - ord("A"), int(coord_str[1:]) - 1)
 
+def loadWall(wall: str):
+    file = open(wall, 'r')
+    return [[float(i) for i in x.strip('\n').split(',')] for x in file.readlines()]
+
 
 if __name__ == "__main__":
     # get input arguments and check for grade
@@ -91,11 +96,16 @@ if __name__ == "__main__":
         '-v', '--verbose',
         action='store_true',
         help='verbose output')
+    parser.add_argument(
+        '-w', '--wall',
+        help='wall file to map outputs to'
+    )
     parser.set_defaults(verbose=False)
     args = parser.parse_args()
 
     VERBOSE = args.verbose
     grade = args.grade
+    wall = loadWall(args.wall)
 
     # set constants
     cwd = Path(__file__).parent
@@ -215,7 +225,16 @@ if __name__ == "__main__":
         x, y = stringToCoordiante(hold_str[:-3])
         # magic numbers for normalisation. only for moonboard though so this needs changing to be proper
         #TODO: fix magic numbers
-        holds.append({"x": (90 + 52 * x) / 665, "y": (1020 - 52 * y) / 1023})
+        x = (90 + 52 * x) / 665
+        y = (1020 - 52 * y) / 1023
+        
+        wall.sort(key = lambda p: (p[0] - x)**2 + (p[1] - y)**2)
+        sample = list(filter(lambda p: (p[0] - x)**2 + (p[1] - y)**2 < (52/665)**2, wall))
+        if len(sample) == 0:
+            print("COULD NOT FIND HOLD AT LOCATION", x, y)
+            hold = [x, y]
+        hold = random.choice(sample)
+        holds.append({"x": hold[0], "y": hold[1]})
 
 
     # dump JSON string of holds
