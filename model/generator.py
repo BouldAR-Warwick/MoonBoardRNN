@@ -15,7 +15,7 @@ from tensorflow.keras.layers import RepeatVector
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import to_categorical
 
-from DeepRouteSetHelper import sanityCheckAndOutput, moveGeneratorFromStrList
+from DeepRouteSet_helper import sanityCheckAndOutput, moveGeneratorFromStrList
 from model_helper import normalization
 
 

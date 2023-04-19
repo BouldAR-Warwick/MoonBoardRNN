@@ -14,7 +14,6 @@ def save_pickle(data, file_name):
     """
     with open(file_name, 'wb') as f:
         pickle.dump(data, f)
-    return None
 
 
 def plot_confusion_matrix(Y_true, Y_predict, title = None):
@@ -148,7 +147,7 @@ def normalization(input_set):
     output_set['X'] = X_normalized
     return output_set
 
-def convert_generated_data_into_test_set(generated_problems, save_path):
+def prepare_generated_data_for_grading(generated_problems, save_path):
     n_sample = len(generated_problems)
     X_seq_data_merge = np.zeros((n_sample, 12, 22))
     keys_seq_merge = []
