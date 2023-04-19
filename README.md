@@ -42,11 +42,11 @@ To run GradeNet, open the jupyter notebook in `\model\GradeNet.ipynb` and follow
 
 #### DeepRouteSet
 
-To run GradeNet, open the jupyter notebook in `\model\DeepRouteSet_v4.ipynb` and follow the instructions. You can either re-run the experiments, or load the pretrained weights `\model\DeepRouteSetMedium_v1.h5`. The code in this file is largely modified from a Coursera problem exercise "Improvise a Jazz Solo with an LSTM Network", which is originally modified from https://github.com/jisungk/deepjazz.
+To run GradeNet, open the jupyter notebook in `\model\DeepRouteSet_v4.ipynb` and follow the instructions. You can either re-run the experiments, or load the pretrained weights `\model\DeepRouteSet_medium.h5`. The code in this file is largely modified from a Coursera problem exercise "Improvise a Jazz Solo with an LSTM Network", which is originally modified from https://github.com/jisungk/deepjazz.
 
 #### Predict the grade of generated problems
 
-To evaluate the generated problems, open the jupyter notebook in `\model\Evaluate_Generated_Output_v3.ipynb` and follow the instructions. Please remember to check if `raw_path` is correct.
+To evaluate the generated problems, open the jupyter notebook in `\model\generated_route_eval.ipynb` and follow the instructions. Please remember to check if `raw_path` is correct.
 
 
 ### `out`
@@ -71,16 +71,16 @@ general advice:
 ### Project structure:
 ├───`model` generation and grading model training & prediction
 │   │   `DeepRouteSetHelper.py`                   helper functions for DeepRouteSet
-│   │   `DeepRouteSetMedium_v1.h5`                model weights for deep route set TODO: whats medium?
+│   │   `DeepRouteSet_medium.h5`                  model weights for deep route set TODO: whats medium?
 │   │   `DeepRouteSet_v4.ipynb`                   DeepRouteSet model training and prediction
-│   │   `Evaluate_Generated_Output_v3.ipynb`      Evaluation of GradeNet prediction of generated problems
+│   │   `generated_route_eval.ipynb`              Evaluation of GradeNet prediction of generated problems
 │   │   `GeneratedRoutes`
 │   │   `generator.py`                            script to generate problems of a given grade
 │   │   `GradeNet.h5`                             GradeNet model weights
 │   │   `GradeNet.ipynb`                          GradeNet model training and prediction
 │   │   `GradeNet_train_history`
-│   │   `MediumProblemOfDeepRouteSet_v1`
-│   │   `MediumProblemSequenceOfDeepRouteSet_v1`
+│   │   `DeepRouteSet_medium_out`
+│   │   `DeepRouteSet_medium_out_seq`
 │   │   `model_helper.py`                         helper functions for GradeNet
 │   │
 │   ├───`DeepRouteSet` DeepRouteSet saved model
