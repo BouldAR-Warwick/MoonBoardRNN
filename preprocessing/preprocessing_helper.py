@@ -165,11 +165,11 @@ def classify_and_reorganize_data(raw_data, save_path, feature_dict, delta_xy_mod
             item['end'] = []
             for hold in item['moves']:
                 if hold['IsStart']:
-                    item['start'].append(stringToCoordiante(hold['Description']))
+                    item['start'].append(str_to_coordinate(hold['Description']))
                 elif hold['IsEnd']:
-                    item['end'].append(stringToCoordiante(hold['Description']))
+                    item['end'].append(str_to_coordinate(hold['Description']))
                 else:
-                    item['mid'].append(stringToCoordiante(hold['Description']))
+                    item['mid'].append(str_to_coordinate(hold['Description']))
 
             # TODO: cant find them in the JSON? start/mid/end holds?
             n_start = len(item['start'])
@@ -651,7 +651,7 @@ def moveGenerator(beta, string_mode = True):
                 moveDictionary["TargetHoldHand"] = 0   # LH ->0
             else: moveDictionary["TargetHoldHand"] = 1  # RH -> 1 
         else: 
-            moveDictionary["TargetHoldString"] = coordinateToString(coordinateOfTarget)
+            moveDictionary["TargetHoldString"] = coordinate_to_str(coordinateOfTarget)
             moveDictionary["TargetHoldHand"] = targetHoldHand
         moveDictionary["TargetHoldScore"] = holdScoreUseCordAndOp(coordinateOfTarget, targetHoldHand)   # Could you file I/O excile file L/R hand difficulty?
         
@@ -666,7 +666,7 @@ def moveGenerator(beta, string_mode = True):
             moveDictionary["RemainingHoldString"] = coordinateOfRemaining
             moveDictionary["RemainingHoldHand"] = 1 - moveDictionary["TargetHoldHand"]
         else: 
-            moveDictionary["RemainingHoldString"] = coordinateToString(coordinateOfRemaining)
+            moveDictionary["RemainingHoldString"] = coordinate_to_str(coordinateOfRemaining)
             moveDictionary["RemainingHoldHand"] = remainingHoldHand
         moveDictionary["RemainingHoldScore"] = holdScoreUseCordAndOp(coordinateOfRemaining, remainingHoldHand)
         moveDictionary["dxdyRtoT"] = (coordinateOfTarget[0] - coordinateOfRemaining[0], coordinateOfTarget[1] - coordinateOfRemaining[1])
@@ -680,7 +680,7 @@ def moveGenerator(beta, string_mode = True):
             moveDictionary["MovingHoldString"] = coordinateOfMoving
             moveDictionary["MovingHoldHand"] = moveDictionary["TargetHoldHand"]
         else: 
-            moveDictionary["MovingHoldString"] = coordinateToString(coordinateOfMoving)
+            moveDictionary["MovingHoldString"] = coordinate_to_str(coordinateOfMoving)
             moveDictionary["MovingHoldHand"] = movingHoldHand
         moveDictionary["MovingHoldScore"] = holdScoreUseCordAndOp(coordinateOfMoving, movingHoldHand)
         moveDictionary["dxdyMtoT"] = (coordinateOfTarget[0] - coordinateOfMoving[0], coordinateOfTarget[1] - coordinateOfMoving[1])
@@ -874,18 +874,18 @@ def produce_sequence(keyNum, X_dict, n_return = 1, printout = False):
     for i in largestIndex:
         output[i] = status[i]
         if printout == True:
-            print([coordinateToString(status[i].getXYFromOrder(j)) for j in status[i].handSequence])
+            print([coordinate_to_str(status[i].getXYFromOrder(j)) for j in status[i].handSequence])
             print(status[i].handSequence, status[i].handOperator, status[i].overallSuccessRate())
         #print(status[i].successScoreSequence)
     
     return output
 
-def stringToCoordiante(coord_str: str):
+def str_to_coordinate(coord_str: str):
     """Convert coordinate string (e.g. "J5") to integer (9,4)"""
     coord_str = coord_str.upper()
     return (ord(coord_str[0]) - ord('A'), int(coord_str[1:]) - 1)
 
-def coordinateToString(coordinate):
+def coordinate_to_str(coordinate):
     """Convert coordinate integer (x,y) to string (e.g. (9,4) to "J5")"""
     return chr(ord('A') + int(coordinate[0])) + str(int(coordinate[1]) + 1)
 
@@ -919,7 +919,7 @@ def handStringSeqGeneratorForAllProblem(processed_data, save_path, print_result 
             
             for orderOfHand in range(numOfMoves):  
                 targetCoordinate = beamerBeta.getXYFromOrder(routeHandSequence[orderOfHand])
-                newHandStr = coordinateToString(targetCoordinate) + "-" + routeOpSequence[orderOfHand]
+                newHandStr = coordinate_to_str(targetCoordinate) + "-" + routeOpSequence[orderOfHand]
                 handStringList.append(newHandStr)
             if print_result:
                 print('Complete %s' %key)
@@ -1022,7 +1022,7 @@ def moveGenerator(beta, string_mode = True):
                 moveDictionary["TargetHoldHand"] = 0   # LH ->0
             else: moveDictionary["TargetHoldHand"] = 1  # RH -> 1 
         else: 
-            moveDictionary["TargetHoldString"] = coordinateToString(coordinateOfTarget)
+            moveDictionary["TargetHoldString"] = coordinate_to_str(coordinateOfTarget)
             moveDictionary["TargetHoldHand"] = targetHoldHand
         moveDictionary["TargetHoldScore"] = holdScoreUseCordAndOp(coordinateOfTarget, targetHoldHand)   # Could you file I/O excile file L/R hand difficulty?
         
@@ -1037,7 +1037,7 @@ def moveGenerator(beta, string_mode = True):
             moveDictionary["RemainingHoldString"] = coordinateOfRemaining
             moveDictionary["RemainingHoldHand"] = 1 - moveDictionary["TargetHoldHand"]
         else: 
-            moveDictionary["RemainingHoldString"] = coordinateToString(coordinateOfRemaining)
+            moveDictionary["RemainingHoldString"] = coordinate_to_str(coordinateOfRemaining)
             moveDictionary["RemainingHoldHand"] = remainingHoldHand
         moveDictionary["RemainingHoldScore"] = holdScoreUseCordAndOp(coordinateOfRemaining, remainingHoldHand)
         moveDictionary["dxdyRtoT"] = (coordinateOfTarget[0] - coordinateOfRemaining[0], coordinateOfTarget[1] - coordinateOfRemaining[1])
@@ -1051,7 +1051,7 @@ def moveGenerator(beta, string_mode = True):
             moveDictionary["MovingHoldString"] = coordinateOfMoving
             moveDictionary["MovingHoldHand"] = moveDictionary["TargetHoldHand"]
         else: 
-            moveDictionary["MovingHoldString"] = coordinateToString(coordinateOfMoving)
+            moveDictionary["MovingHoldString"] = coordinate_to_str(coordinateOfMoving)
             moveDictionary["MovingHoldHand"] = movingHoldHand
         moveDictionary["MovingHoldScore"] = holdScoreUseCordAndOp(coordinateOfMoving, movingHoldHand)
         moveDictionary["dxdyMtoT"] = (coordinateOfTarget[0] - coordinateOfMoving[0], coordinateOfTarget[1] - coordinateOfMoving[1])

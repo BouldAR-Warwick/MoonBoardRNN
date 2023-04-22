@@ -75,12 +75,12 @@ def move_list_to_vectors(move_sequence):
 
 
 # TODO: this should be imported from preprocessing.preprocessing_helper
-def stringToCoordiante(coord_str: str):
+def str_to_coordinate(coord_str: str):
     """Convert coordinate string (e.g. "J5") to integer (9,4)"""
     coord_str = coord_str.upper()
     return (ord(coord_str[0]) - ord("A"), int(coord_str[1:]) - 1)
 
-def loadWall(wall: str):
+def load_wall(wall: str):
     file = open(wall, 'r')
     return [[float(i) for i in x.strip('\n').split(',')] for x in file.readlines()]
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     VERBOSE = args.verbose
     grade = args.grade
-    wall = loadWall(args.wall)
+    wall = load_wall(args.wall)
 
     # set constants
     cwd = Path(__file__).parent
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     holds = []
 
     for hold_str in outputListInString:
-        x, y = stringToCoordiante(hold_str[:-3])
+        x, y = str_to_coordinate(hold_str[:-3])
         # magic numbers for normalisation. only for moonboard though so this needs changing to be proper
         #TODO: fix magic numbers
         x = (90 + 52 * x) / 665
