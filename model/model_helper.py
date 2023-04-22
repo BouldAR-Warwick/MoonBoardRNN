@@ -7,6 +7,8 @@ import pandas as pd
 import matplotlib.cbook as cbook
 import re
 from pathlib import Path
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+from tensorflow import make_ndarray
 
 
 def save_pickle(data, file_name):
@@ -57,6 +59,42 @@ def plot_history(history, model_name):
 
     axes[1].plot(loss)
     axes[1].plot(val_loss)
+    axes[1].set_title("Loss of " + model_name)
+    axes[1].set_ylabel("Loss")
+    axes[1].set_xlabel("Epoch")
+    axes[1].legend(["Train", "Val"], loc="upper left")
+    plt.tight_layout()
+
+
+def plot_tb_history(log_dir, model_name):
+    # fetch events from logs
+    train_ea = EventAccumulator(str(next(log_dir.glob('train/*'))))
+    train_ea.Reload()
+    val_ea = EventAccumulator(str(next(log_dir.glob('validation/*'))))
+    val_ea.Reload()
+
+    # load the loss and accuracy tensors
+    train_loss = train_ea.Tensors('epoch_loss')
+    train_acc = train_ea.Tensors('epoch_sparse_categorical_accuracy')
+    val_loss = val_ea.Tensors('epoch_loss')
+    val_acc = val_ea.Tensors('epoch_sparse_categorical_accuracy')
+
+    train_loss = [t.step for t in train_loss], [make_ndarray(t.tensor_proto).item() for t in train_loss]
+    train_acc = [t.step for t in train_acc], [make_ndarray(t.tensor_proto).item() for t in train_acc]
+    val_loss = [t.step for t in val_loss], [make_ndarray(t.tensor_proto).item() for t in val_loss]
+    val_acc = [t.step for t in val_acc], [make_ndarray(t.tensor_proto).item() for t in val_acc]
+
+    # plot
+    _, axes = plt.subplots(nrows=1, ncols=2)
+    axes[0].plot(*train_acc)
+    axes[0].plot(*val_acc)
+    axes[0].set_title("Accuracy of " + model_name)
+    axes[0].set_ylabel("Accuracy")
+    axes[0].set_xlabel("Epoch")
+    axes[0].legend(["Train", "Val"], loc="upper left")
+
+    axes[1].plot(*train_loss)
+    axes[1].plot(*val_loss)
     axes[1].set_title("Loss of " + model_name)
     axes[1].set_ylabel("Loss")
     axes[1].set_xlabel("Epoch")
