@@ -70,25 +70,27 @@ general advice:
 
 ### Project structure:
 ├───`model` generation and grading model training & prediction
-│   │   `DeepRouteSetHelper.py`                   helper functions for DeepRouteSet
-│   │   `DeepRouteSet_medium.h5`                  model weights for deep route set TODO: whats medium?
-│   │   `DeepRouteSet_v4.ipynb`                   DeepRouteSet model training and prediction
-│   │   `generated_route_eval.ipynb`              Evaluation of GradeNet prediction of generated problems
-│   │   `GeneratedRoutes`
-│   │   `generator.py`                            script to generate problems of a given grade
-│   │   `GradeNet.h5`                             GradeNet model weights
-│   │   `GradeNet.ipynb`                          GradeNet model training and prediction
-│   │   `GradeNet_train_history`
+│   │   `DeepRouteSet_helper.py`                  helper functions for DeepRouteSet
+│   │   `DeepRouteSet_medium.h5`                  model weights for deep route set
 │   │   `DeepRouteSet_medium_out`
 │   │   `DeepRouteSet_medium_out_seq`
+│   │   `DeepRouteSet_train.ipynb`                DeepRouteSet model training
+│   │   `DeepRouteSet_eval.ipynb`                 DeepRouteSet model prediction
+│   │   `generated_route_eval.ipynb`              Evaluation of GradeNet prediction of generated problems
+│   │   `generator.py`                            script to generate problems of a given grade
+│   │   `GradeNet.h5`                             GradeNet model weights
+│   │   `GradeNet_train.ipynb`                    GradeNet model training
+│   │   `GradeNet_eval.ipynb`                     GradeNet model prediction
+│   │   `GradeNet_train_history`
 │   │   `model_helper.py`                         helper functions for GradeNet
 │   │
 │   ├───`DeepRouteSet` DeepRouteSet saved model
 │   │
 │   ├───`logs` training logs
+│   │
+│   ├───`checkpoints` training weight checkpoints
 │
 ├───`out`
-│   │   `GeneratedRoutes`
 │   │   `MediumProblemOfDeepRouteSet_v1`
 │   │   `MediumProblemSequenceOfDeepRouteSet_v1`
 │   │   `ProblemOfDeepRouteSet_v1`
@@ -97,9 +99,6 @@ general advice:
 │   ├───`DeepRouteSet_v1`
 │   │       `DeepRouteSet_v1_idX.jpg`
 │   │       `DeepRouteSet_v1_idX_predicted_style.jpg`
-│   │
-│   └───`GeneratedRoutes_v0`
-│           `genX.jpg`
 │
 ├───`preprocessing` preprocessing of raw data
 │       `benchmarkNoGrade_handString_seq_X`
