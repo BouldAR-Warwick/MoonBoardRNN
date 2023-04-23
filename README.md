@@ -13,12 +13,12 @@ This is the project repository for the CS230 Spring 2020 course project, and is 
 ## Overview of our repository
 
 ### `raw_data`
-This folder contains the hold difficulty scores evaluated by climbing experts (`\raw_data\HoldFeature2016LeftHand.csv`, `\raw_data\HoldFeature2016RightHand.csv`, `\raw_data\HoldFeature2016.xlsx`) and our scraped raw data from the MoonBoard website (`\raw_data\moonGen_scrape_2016_final`).
+This folder contains the hold difficulty scores evaluated by climbing experts (`\raw_data\hold_features_2016_LH.csv`, `\raw_data\hold_features_2016_RH.csv`, `\raw_data\hold_features_2016.xlsx`) and our scraped raw data from the MoonBoard website (`\raw_data\moonGen_scrape_2016_final`).
 
 The MoonBoard is a 11x18 grid, with holds in a subset of the positions. The hold difficulties are stored in the following files:
 
-- `HoldFeature2016LeftHand` hold difficulties when using left hand.
-- `HoldFeature2016RightHand` hold difficulties when using right hand.
+- `hold_features_2016_LH` hold difficulties when using left hand.
+- `hold_features_2016_RH` hold difficulties when using right hand.
 - `HoldFeature2016` hold difficulties in an array of 6 values - what do they mean?
 
 The raw data from the MoonBoard website was scraped using the code in https://github.com/gestalt-howard/moonGen. We acknowledged the permission from Howard (Cheng-Hao) Tai to use that code.
@@ -128,20 +128,18 @@ general advice:
 │       `Y_seq_dict_merge`
 │
 ├───`raw_data` raw data from moonboard
-│       `HoldFeature2016.csv`
-│       `HoldFeature2016LeftHand.csv`
-│       `HoldFeature2016RightHand.csv`
-│       `holdIx_to_holdStr`
-│       `holdStr_to_holdIx`
+│       `hold_features_2016.csv`          hold features for both hands? TODO: verify
+│       `hold_features_2016_LH.csv`       hold features for left hand
+│       `hold_features_2016_RH.csv`       hold features for right hand
+│       `holdIx_to_holdStr`               map of hold index to hold string (valid holds only)
+│       `holdStr_to_holdIx`               map of hold string to hold index (valid holds only)
 │       `moonboard2016Background.jpg`     MoonBoard 2016 board image
-│       `MoonBoard_2016_raw.json`
-│       `MoonBoard_2016_raw_schema.json`
-│       `moonGen_scrape_2016`
-│       `moonGen_scrape_2016_cp`
-│       `moonGen_scrape_2016_fail`
-│       `moonGen_scrape_2016_final`
-│
-
+│       `MoonBoard_2016_raw.json`         JSON form of `moonGen_scrape_2016_cp`
+│       `MoonBoard_2016_raw_schema.json`  Schema of `MoonBoard_2016_raw.json`
+│       `moonGen_scrape_2016`             Routes w/o hold info
+│       `moonGen_scrape_2016_cp`          Routes w/ hold info
+│       `moonGen_scrape_2016_fail`        Empty
+│       `moonGen_scrape_2016_final`       Routes w/ hold info (different schema)
 
 
 ### Improvements

@@ -27,8 +27,8 @@ with open(parent_wd / 'raw_data/moonGen_scrape_2016_cp', 'rb') as f:
     MoonBoard_2016_withurl = pickle.load(f)
     
 # Feed in the hold feature.csv files
-LeftHandfeatures = pd.read_csv(parent_wd / 'raw_data/HoldFeature2016LeftHand.csv', dtype=str)
-RightHandfeatures = pd.read_csv(parent_wd / 'raw_data/HoldFeature2016RightHand.csv', dtype=str)
+LeftHandfeatures = pd.read_csv(parent_wd / 'raw_data' / 'hold_features_2016_LH.csv', dtype=str)
+RightHandfeatures = pd.read_csv(parent_wd / 'raw_data' / 'hold_features_2016_RH.csv', dtype=str)
 # convert features from pd dataframe to dictionary of left and right hand
 RightHandfeature_dict = {}
 LeftHandfeature_dict = {}

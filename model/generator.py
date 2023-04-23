@@ -132,8 +132,8 @@ if __name__ == "__main__":
         holdIx_to_holdStr = pickle.load(f)
 
     # load feature dictionaries for generating move features
-    left_hold_feature_path = cwd.parent / "raw_data" / "HoldFeature2016LeftHand.csv"
-    right_hold_feature_path = cwd.parent / "raw_data" / "HoldFeature2016RightHand.csv"
+    left_hold_feature_path = cwd.parent / "raw_data" / "hold_features_2016_LH.csv"
+    right_hold_feature_path = cwd.parent / "raw_data" / "hold_features_2016_RH.csv"
 
     LeftHandfeatures = pd.read_csv(left_hold_feature_path, dtype=str)
     RightHandfeatures = pd.read_csv(right_hold_feature_path, dtype=str)

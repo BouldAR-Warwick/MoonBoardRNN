@@ -131,6 +131,7 @@ dmypy.json
 # VSCode
 .vscode/
 
-# model logs
+# MoonBoardRNN specific
 model/logs
 model/checkpoints
+scratch.ipynb
