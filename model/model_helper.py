@@ -39,34 +39,38 @@ def plot_confusion_matrix(Y_true, Y_predict, title=None):
     plt.show()
 
 
-def plot_history(history, model_name):
+def plot_history(history, model_name, metric=None):
     """
     Plot the training history of the model
     """
     # Plot training & validation accuracy values
-    acc = history.history["sparse_categorical_accuracy"]
-    val_acc = history.history["val_sparse_categorical_accuracy"]
+    if metric:
+        acc = history.history[metric]
+        val_acc = history.history["val_" + metric]
     loss = history.history["loss"]
     val_loss = history.history["val_loss"]
 
-    _, axes = plt.subplots(nrows=1, ncols=2)
-    axes[0].plot(acc)
-    axes[0].plot(val_acc)
-    axes[0].set_title("Accuracy of " + model_name)
-    axes[0].set_ylabel("Accuracy")
-    axes[0].set_xlabel("Epoch")
-    axes[0].legend(["Train", "Val"], loc="upper left")
+    _, axes = plt.subplots(nrows=1, ncols=(2 if metric else 1))
+    ax1 = axes[0] if metric else axes
+    ax1.plot(loss)
+    ax1.plot(val_loss)
+    ax1.set_title("Loss of " + model_name)
+    ax1.set_ylabel("Loss")
+    ax1.set_xlabel("Epoch")
+    ax1.legend(["Train", "Val"], loc="upper left")
 
-    axes[1].plot(loss)
-    axes[1].plot(val_loss)
-    axes[1].set_title("Loss of " + model_name)
-    axes[1].set_ylabel("Loss")
-    axes[1].set_xlabel("Epoch")
-    axes[1].legend(["Train", "Val"], loc="upper left")
+    if metric:
+        axes[1].plot(acc)
+        axes[1].plot(val_acc)
+        axes[1].set_title("Accuracy of " + model_name)
+        axes[1].set_ylabel("Accuracy")
+        axes[1].set_xlabel("Epoch")
+        axes[1].legend(["Train", "Val"], loc="upper left")
+
     plt.tight_layout()
 
 
-def plot_tb_history(log_dir, model_name):
+def plot_tb_history(log_dir, model_name, metric=None):
     # fetch events from logs
     train_ea = EventAccumulator(str(next(log_dir.glob('train/*'))))
     train_ea.Reload()
@@ -75,30 +79,35 @@ def plot_tb_history(log_dir, model_name):
 
     # load the loss and accuracy tensors
     train_loss = train_ea.Tensors('epoch_loss')
-    train_acc = train_ea.Tensors('epoch_sparse_categorical_accuracy')
     val_loss = val_ea.Tensors('epoch_loss')
-    val_acc = val_ea.Tensors('epoch_sparse_categorical_accuracy')
+    if metric:
+        train_acc = train_ea.Tensors(metric)
+        val_acc = val_ea.Tensors(metric)
 
     train_loss = [t.step for t in train_loss], [make_ndarray(t.tensor_proto).item() for t in train_loss]
-    train_acc = [t.step for t in train_acc], [make_ndarray(t.tensor_proto).item() for t in train_acc]
     val_loss = [t.step for t in val_loss], [make_ndarray(t.tensor_proto).item() for t in val_loss]
-    val_acc = [t.step for t in val_acc], [make_ndarray(t.tensor_proto).item() for t in val_acc]
+    if metric:
+        train_acc = [t.step for t in train_acc], [make_ndarray(t.tensor_proto).item() for t in train_acc]
+        val_acc = [t.step for t in val_acc], [make_ndarray(t.tensor_proto).item() for t in val_acc]
 
     # plot
     _, axes = plt.subplots(nrows=1, ncols=2)
-    axes[0].plot(*train_acc)
-    axes[0].plot(*val_acc)
-    axes[0].set_title("Accuracy of " + model_name)
-    axes[0].set_ylabel("Accuracy")
-    axes[0].set_xlabel("Epoch")
-    axes[0].legend(["Train", "Val"], loc="upper left")
+    ax1 = axes[0] if metric else axes
+    ax1.plot(*train_loss)
+    ax1.plot(*val_loss)
+    ax1.set_title("Loss of " + model_name)
+    ax1.set_ylabel("Loss")
+    ax1.set_xlabel("Epoch")
+    ax1.legend(["Train", "Val"], loc="upper left")
+    
+    if metric:
+        axes[1].plot(*train_acc)
+        axes[1].plot(*val_acc)
+        axes[1].set_title("Accuracy of " + model_name)
+        axes[1].set_ylabel("Accuracy")
+        axes[1].set_xlabel("Epoch")
+        axes[1].legend(["Train", "Val"], loc="upper left")
 
-    axes[1].plot(*train_loss)
-    axes[1].plot(*val_loss)
-    axes[1].set_title("Loss of " + model_name)
-    axes[1].set_ylabel("Loss")
-    axes[1].set_xlabel("Epoch")
-    axes[1].legend(["Train", "Val"], loc="upper left")
     plt.tight_layout()
 
 

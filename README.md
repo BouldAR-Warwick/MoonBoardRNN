@@ -107,25 +107,33 @@ general advice:
 │       `benchmark_nograde_move_seq_Y`
 │       `benchmark_withgrade_move_seq_X`
 │       `benchmark_withgrade_move_seq_Y`
-│       `constants.py`                            constants used in preprocessing
-│       `dev_seq_n_12_rmrp0`
+
 │       `nonbenchmarkNoGrade_handString_seq_X`
 │       `nonbenchmark_handString_seq_X`
 │       `nonbenchmark_nograde_move_seq_X`
 │       `nonbenchmark_nograde_move_seq_Y`
 │       `nonbenchmark_withgrade_move_seq_X`
 │       `nonbenchmark_withgrade_move_seq_Y`
-│       `preprocessing_helper.py`                 helper functions for preprocessing
+
 │       `processed_data_seq`
 │       `processed_data_xy_mode`
-│       `Step1_data_preprocessing_v2.ipynb`       step 1: aasdsd
-│       `Step2_BetaMove.ipynb`                    step 2: asda
-│       `Step3_partition_train_test_set_v2.ipynb` step 3: askdkasodk
-│       `test_seq_n_12_rmrp0`
+
 │       `test_set_medium_gen_v1`
-│       `training_seq_n_12_rmrp0`
 │       `X_seq_dict_merge`
 │       `Y_seq_dict_merge`
+
+Train/val/test datasets for GradeNet. Each example is a list of moves where each move is described by a 22-dim feature vector.
+The Y truths are the grades (adjusted so V4 is 0) of the problems (given as a single float, not one-hot encoded). 
+│       `training_seq_n_12_rmrp0`                 training set for GradeNet ({'X': , 'Y': })
+│       `dev_seq_n_12_rmrp0`                      validation set for GradeNet
+│       `test_seq_n_12_rmrp0`                     test set for GradeNet
+
+│       `constants.py`                            constants used in preprocessing
+│       `preprocessing_helper.py`                 helper functions for preprocessing
+
+│       `Step1_data_preprocessing_v2.ipynb`       step 1: 
+│       `Step2_BetaMove.ipynb`                    step 2: 
+│       `Step3_partition_train_test_set_v2.ipynb` step 3: 
 │
 ├───`raw_data` raw data from moonboard
 │       `hold_features_2016.csv`          hold features for both hands? TODO: verify
@@ -144,25 +152,37 @@ general advice:
 
 ### Improvements
 
-- path portability
-- `pyproject.toml` for dependency management
-- fixed broken sections in preprocessing TODO: specify which sections
-<!-- - changed optimiser from Adam to AdamW not possible without latest tensorflow 2.12  
-  - fixes issues with weight decay -->
+- imp: model portability
+  - `pyproject.toml` for dependency management
+- imp: fixed broken sections in preprocessing TODO: specify which sections
 - single script `generator.py` for generating problems of a given grade
-- fixed loss function used by gradenet for compatability with eager execution
-- model saving and loading for faster on demand route generation/grading
-- TODO: batch prediction, rather than iterative, greatly increased speed
-- TODO: changed gradenet to use ordinal regression instead of classification
+  - design: how we plan for it to work
+  - imp: model saving for performance
+  - imp: batch prediction rather than iterative
+- imp: fixed loss function used by gradenet for compatability with eager execution
+
+- design: decided not to use class weighting as we want to maintain a similar distribution between our training examples and real world test
+  - user are much more likely to submit V4-6 than >V9
+  - class weighting resulted in training loss being much greater than validation, due to higher presence of low grades in validation and training
+- design: changed gradenet to use regression instead of classification (not ordinal just pure regression, as the grades are numerical)
+  - belive this contributed/resulted in the weird confusion matrix
+    - as large grade differences were penalised just as much as small differences (due to the same loss)
+    - => won't predict close grade
+    - => no motivation to predict close grades to desired
   - this adds significant additional information to the loss function as it gives how far off the prediction is from the actual grade
-- TODO: modify deeprouteset to be compatible with generic training boards
+
+- design: modify deeprouteset to be compatible with generic training boards
+  - approximate generalisation
+  - explain why and drawbacks
+
 - TODO: modify deeprouteset to generate problems of a given grade
   - add grade as input to model
   - add gradenet to end of model as loss function for similarity to requested grade
-- TODO: modify betamove to generate moves from holds using an improved alogrithm
+
+ANALYSE AND ATTEMPT THIS based on the 2023 paper
+- TODO: design: modify betamove to generate moves from holds using an improved alogrithm
   - currently only uses guassian around current hand positions to evaluate cost
   - best moves are selected via beam search
   - has been suggested to use outlier detection against a set of benchmark moves
   - see the 2023 paper for improved hold difficulty heuristics
   - ensure that the raw data is still present for machine learning along side the added heuristics
-
