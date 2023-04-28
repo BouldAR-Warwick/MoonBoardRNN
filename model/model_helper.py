@@ -39,33 +39,37 @@ def plot_confusion_matrix(Y_true, Y_predict, title=None):
     plt.show()
 
 
-def plot_history(history, model_name, metric=None):
+def plot_history(history, model_name, losses=["loss"], metrics=["accuracy"]):
     """
     Plot the training history of the model
     """
     # Plot training & validation accuracy values
-    if metric:
-        acc = history.history[metric]
-        val_acc = history.history["val_" + metric]
-    loss = history.history["loss"]
-    val_loss = history.history["val_loss"]
+    if metrics:
+        history_metrics = {}
+        for metric in metrics:
+            history_metrics["Train " + metric] = history.history[metric]
+            history_metrics["Validation " + metric] = history.history["val_" + metric]
+    history_losses = {}
+    for loss in losses:
+        history_losses["Train " + loss] = history.history[loss]
+        history_losses["Validation " + loss] = history.history["val_" + loss]
 
-    _, axes = plt.subplots(nrows=1, ncols=(2 if metric else 1))
-    ax1 = axes[0] if metric else axes
-    ax1.plot(loss)
-    ax1.plot(val_loss)
+    _, axes = plt.subplots(nrows=1, ncols=(2 if metrics else 1), figsize=(10, 5))
+    ax1 = axes[0] if metrics else axes
+    for key in history_losses:
+        ax1.plot(history_losses[key], label=key)
     ax1.set_title("Loss of " + model_name)
     ax1.set_ylabel("Loss")
     ax1.set_xlabel("Epoch")
-    ax1.legend(["Train", "Val"], loc="upper left")
+    ax1.legend()
 
-    if metric:
-        axes[1].plot(acc)
-        axes[1].plot(val_acc)
+    if metrics:
+        for key in history_metrics:
+            axes[1].plot(history_metrics[key], label=key)
         axes[1].set_title("Accuracy of " + model_name)
         axes[1].set_ylabel("Accuracy")
         axes[1].set_xlabel("Epoch")
-        axes[1].legend(["Train", "Val"], loc="upper left")
+        axes[1].legend()
 
     plt.tight_layout()
 
