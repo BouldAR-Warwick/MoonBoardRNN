@@ -10,8 +10,11 @@ import random
 # Turn off tensorflow warnings
 environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-import tensorflow.keras.backend as K
+# these are requried for the lambda function within DeepRouteSet
+import tensorflow as tf
+from tensorflow.keras.backend import argmax
 from tensorflow.keras.layers import RepeatVector
+
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import to_categorical
 
@@ -80,52 +83,48 @@ def str_to_coordinate(coord_str: str):
     coord_str = coord_str.upper()
     return (ord(coord_str[0]) - ord("A"), int(coord_str[1:]) - 1)
 
+
 def load_wall(wall: str):
-    file = open(wall, 'r')
-    return [[float(i) for i in x.strip('\n').split(',')] for x in file.readlines()]
+    file = open(wall, "r")
+    return [[float(i) for i in x.strip("\n").split(",")] for x in file.readlines()]
+
+
+def one_off_accuracy(y_true, y_pred):
+    """Computes the accuracy of a grade prediction including +/-1 errors
+
+    Args:
+        y_true: true grades
+        y_pred: predicted grades
+    """
+    return tf.reduce_mean(tf.cast(abs(y_true - tf.math.round(y_pred)) <= 1, tf.float32))
 
 
 if __name__ == "__main__":
     # get input arguments and check for grade
     parser = argparse.ArgumentParser(
-        description='Generate a MoonBoard route of a given grade.')
-    parser.add_argument(
-        'grade', nargs=1, type=int,
-        help='a grade between 0 and 13 (Hueco V-scale)')
-    parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='verbose output')
-    parser.add_argument(
-        '-w', '--wall',
-        help='wall file to map outputs to'
+        description="Generate a MoonBoard route of a given grade."
     )
+    parser.add_argument(
+        "grade", nargs=1, type=int, help="a grade between 0 and 13 (Hueco V-scale)"
+    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
+    parser.add_argument("-w", "--wall", help="wall file to map outputs to")
     parser.set_defaults(verbose=False)
     args = parser.parse_args()
 
     VERBOSE = args.verbose
     grade = args.grade
+
+    if VERBOSE: print(f"Loading wall from {args.wall}...")
     wall = load_wall(args.wall)
 
     # set constants
     cwd = Path(__file__).parent
 
-    # think this is number of holds?
+    # number of MoonBoard holds (inc left/right hand)
     n_values = 278
     # num dimensions of LSTM hidden state
     n_a = 64
-
-    # load magic handString list
-    benchmark_handString_seq_path = (
-        cwd.parent / "preprocessing" / "benchmark_handString_seq_X"
-    )
-    with open(benchmark_handString_seq_path, "rb") as f:
-        benchmark_handString_seq = pickle.load(f)
-    # TODO: this looks INCREDIBLY redundant, just converting values into list
-    # Removing handStringList for now
-    # handStringList = []
-    # for key in benchmark_handString_seq.keys():
-    #     handStringList.append(benchmark_handString_seq[key])
 
     # map of hold indicies to hold strings
     with open(cwd.parent / "raw_data" / "holdIx_to_holdStr", "rb") as f:
@@ -157,7 +156,7 @@ if __name__ == "__main__":
     inference_model = load_model(cwd / "DeepRouteSet")
 
     # create grading model
-    grade_model = load_model(cwd / "GradeNet")
+    grade_model = load_model(cwd / "GradeNet", custom_objects={"one_off_accuracy": one_off_accuracy})
 
     # ===================== Begin generation and grading ======================
 
@@ -210,32 +209,30 @@ if __name__ == "__main__":
         grade_prob = grade_model.predict(X, verbose=(1 if VERBOSE else 0))
         grade_pred = grade_prob.argmax() + 4
         if VERBOSE:
-            print(
-                f"Predicted grade: V{grade_pred} ({grade_prob.max():.2f})"
-            )
+            print(f"Predicted grade: V{grade_pred} ({grade_prob.max():.2f})")
 
         # TODO: check grade, for testing will return first route
         # if the grade matches the desired grade then we are done
-        # generated_valid_grade = grade_pred == grade 
+        # generated_valid_grade = grade_pred == grade
         generated_valid_grade = True
-    
+
     holds = []
 
     for hold_str in outputListInString:
         x, y = str_to_coordinate(hold_str[:-3])
         # magic numbers for normalisation. only for moonboard though so this needs changing to be proper
-        #TODO: fix magic numbers
+        # TODO: fix magic numbers
         x = (90 + 52 * x) / 665
         y = (1020 - 52 * y) / 1023
-        
+
         wall.sort(key = lambda p: (p[0] - x)**2 + (p[1] - y)**2)
         sample = list(filter(lambda p: (p[0] - x)**2 + (p[1] - y)**2 < (52/665)**2, wall))
         if len(sample) == 0:
             print("COULD NOT FIND HOLD AT LOCATION", x, y)
             hold = [x, y]
-        hold = random.choice(sample)
+        else:
+            hold = random.choice(sample)
         holds.append({"x": hold[0], "y": hold[1]})
-
 
     # dump JSON string of holds
     print(json_dumps(holds))
