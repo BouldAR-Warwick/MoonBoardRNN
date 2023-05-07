@@ -151,17 +151,24 @@ def sanityCheckAndOutput(indices, holdIx_to_holdStr, printError = False):
                 outputListInString.append(holdIx_to_holdStr[int(indices[i])]) 
                 outputListInIx.append(int(indices[i])) 
             lastString = holdIx_to_holdStr[int(indices[i])]
+
+    # check there's atleast 2 holds lmao
+    if len(outputListInString) < 2:
+        passCheck = False
+        if printError: print("Not enough holds", outputListInString)
+        return passCheck, outputListInString, outputListInIx
             
     outputListInStringSet = set(outputListInString) # Delete repetitive string
     outputListInIxSet = set(outputListInIx) # Delete repetitive string
     
     # Check if the second hold match with third hold
-    stringOfSecondHold = holdIx_to_holdStr[int(indices[1])].split("-")[0]
-    stringOfThirdHold = holdIx_to_holdStr[int(indices[2])].split("-")[0]
-    if stringOfSecondHold == stringOfThirdHold:
-        passCheck = False
-        if printError: print("Warning: Second match hand with third", outputListInString)
-        return passCheck, outputListInString, outputListInIx
+    # TODO: remove this? we don't care if we match hands
+    # stringOfSecondHold = holdIx_to_holdStr[int(indices[1])].split("-")[0]
+    # stringOfThirdHold = holdIx_to_holdStr[int(indices[2])].split("-")[0]
+    # if stringOfSecondHold == stringOfThirdHold:
+    #     passCheck = False
+    #     if printError: print("Warning: Second match hand with third", outputListInString)
+    #     return passCheck, outputListInString, outputListInIx
     
     # Check if the first and second hold have the same op
     opOfFirstHold = holdIx_to_holdStr[int(indices[0])].split("-")[1]
