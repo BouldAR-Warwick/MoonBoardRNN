@@ -200,12 +200,12 @@ if __name__ == "__main__":
     if VERBOSE: print("Preparing routes for grading...")
     # we need to transpose the sequence vectors and pad
     seq_data_pad = np.zeros((num_routes, 12, 22))
-    tmax = np.array([12]*num_routes)
-    input_set = {"X": seq_data_pad, "tmax": tmax}
+    tmax = np.array([0]*num_routes)
     for i in range(len(routes)):
         # convert route into moves to pass to generator
         move_sequence = moveGeneratorFromStrList(routes[i], string_mode=False)
         num_moves = len(move_sequence)
+        tmax[i] = num_moves
 
         # convert moves into the required 22dim vector
         sequence_vectors = move_list_to_vectors(move_sequence)
@@ -230,6 +230,8 @@ if __name__ == "__main__":
             holds.append({"x": hold[0], "y": hold[1]})
         routes[i] = holds
 
+    input_set = {"X": seq_data_pad, "tmax": tmax}
+    print(tmax)
     # for each of the routes predict the grade and store in dict
     graded_routes = {}
     # apply standardisation to sequence vectors based on that used for training
