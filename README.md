@@ -69,85 +69,86 @@ general advice:
 - the `pyproject.toml` will need to be adjusted for different tensorflow environments e.g. CUDA, MAC
 
 ### Project structure:
-├───`model` generation and grading model training & prediction
-│   │   `DeepRouteSet_helper.py`                  helper functions for DeepRouteSet
-│   │   `DeepRouteSet_medium.h5`                  model weights for deep route set
-│   │   `DeepRouteSet_medium_out`
-│   │   `DeepRouteSet_medium_out_seq`
-│   │   `DeepRouteSet_train.ipynb`                DeepRouteSet model training
-│   │   `DeepRouteSet_eval.ipynb`                 DeepRouteSet model prediction
-│   │   `generated_route_eval.ipynb`              Evaluation of GradeNet prediction of generated problems
-│   │   `generator.py`                            script to generate problems of a given grade
-│   │   `GradeNet.h5`                             GradeNet model weights
-│   │   `GradeNet_train.ipynb`                    GradeNet model training
-│   │   `GradeNet_eval.ipynb`                     GradeNet model prediction
-│   │   `GradeNet_train_history`
-│   │   `model_helper.py`                         helper functions for GradeNet
-│   │
-│   ├───`DeepRouteSet` DeepRouteSet saved model
-│   │
-│   ├───`logs` training logs
-│   │
-│   ├───`checkpoints` training weight checkpoints
-│
-├───`out`
-│   │   `MediumProblemOfDeepRouteSet_v1`
-│   │   `MediumProblemSequenceOfDeepRouteSet_v1`
-│   │   `ProblemOfDeepRouteSet_v1`
-│   │   `ProblemSequenceOfDeepRouteSet_v1`
-│   │
-│   ├───`DeepRouteSet_v1`
-│   │       `DeepRouteSet_v1_idX.jpg`
-│   │       `DeepRouteSet_v1_idX_predicted_style.jpg`
-│
-├───`preprocessing` preprocessing of raw data
-│       `benchmarkNoGrade_handString_seq_X`
-│       `benchmark_handString_seq_X`
-│       `benchmark_nograde_move_seq_X`
-│       `benchmark_nograde_move_seq_Y`
-│       `benchmark_withgrade_move_seq_X`
-│       `benchmark_withgrade_move_seq_Y`
+    ├───`model` generation and grading model training & prediction
+    │   │   `DeepRouteSet_helper.py`                  helper functions for DeepRouteSet
+    │   │   `DeepRouteSet_medium.h5`                  model weights for deep route set
+    │   │   `DeepRouteSet_medium_out`
+    │   │   `DeepRouteSet_medium_out_seq`
+    │   │   `DeepRouteSet_train.ipynb`                DeepRouteSet model training
+    │   │   `DeepRouteSet_eval.ipynb`                 DeepRouteSet model prediction
+    │   │   `generated_route_eval.ipynb`              Evaluation of GradeNet prediction of generated problems
+    │   │   `generator.py`                            script to generate problems of a given grade
+    │   │   `GradeNet.h5`                             GradeNet model weights
+    │   │   `GradeNet_train.ipynb`                    GradeNet model training
+    │   │   `GradeNet_eval.ipynb`                     GradeNet model prediction
+    │   │   `GradeNet_train_history`
+    │   │   `model_helper.py`                         helper functions for GradeNet
+    │   │
+    │   ├───`DeepRouteSet` DeepRouteSet saved model
+    │   │
+    │   ├───`logs` training logs
+    │   │
+    │   ├───`checkpoints` training weight checkpoints
+    │
+    ├───`out`
+    │   │   `MediumProblemOfDeepRouteSet_v1`
+    │   │   `MediumProblemSequenceOfDeepRouteSet_v1`
+    │   │   `ProblemOfDeepRouteSet_v1`
+    │   │   `ProblemSequenceOfDeepRouteSet_v1`
+    │   │
+    │   ├───`DeepRouteSet_v1`
+    │   │       `DeepRouteSet_v1_idX.jpg`
+    │   │       `DeepRouteSet_v1_idX_predicted_style.jpg`
+    │
+    ├───`preprocessing` preprocessing of raw data
+    │       `benchmarkNoGrade_handString_seq_X`
+    │       `benchmark_handString_seq_X`
+    │       `benchmark_nograde_move_seq_X`
+    │       `benchmark_nograde_move_seq_Y`
+    │       `benchmark_withgrade_move_seq_X`
+    │       `benchmark_withgrade_move_seq_Y`
 
-│       `nonbenchmarkNoGrade_handString_seq_X`
-│       `nonbenchmark_handString_seq_X`
-│       `nonbenchmark_nograde_move_seq_X`
-│       `nonbenchmark_nograde_move_seq_Y`
-│       `nonbenchmark_withgrade_move_seq_X`
-│       `nonbenchmark_withgrade_move_seq_Y`
+    │       `nonbenchmarkNoGrade_handString_seq_X`
+    │       `nonbenchmark_handString_seq_X`
+    │       `nonbenchmark_nograde_move_seq_X`
+    │       `nonbenchmark_nograde_move_seq_Y`
+    │       `nonbenchmark_withgrade_move_seq_X`
+    │       `nonbenchmark_withgrade_move_seq_Y`
 
-│       `processed_data_seq`
-│       `processed_data_xy_mode`
+    │       `processed_data_seq`
+    │       `processed_data_xy_mode`
 
-│       `test_set_medium_gen_v1`
-│       `X_seq_dict_merge`
-│       `Y_seq_dict_merge`
+    │       `test_set_medium_gen_v1`
+    │       `X_seq_dict_merge`
+    │       `Y_seq_dict_merge`
 
 Train/val/test datasets for GradeNet. Each example is a list of moves where each move is described by a 22-dim feature vector.
-The Y truths are the grades (adjusted so V4 is 0) of the problems (given as a single float, not one-hot encoded). 
-│       `training_seq_n_12_rmrp0`                 training set for GradeNet ({'X': , 'Y': })
-│       `dev_seq_n_12_rmrp0`                      validation set for GradeNet
-│       `test_seq_n_12_rmrp0`                     test set for GradeNet
+The Y truths are the grades (adjusted so V4 is 0) of the problems (given as a single float, not one-hot encoded).
 
-│       `constants.py`                            constants used in preprocessing
-│       `preprocessing_helper.py`                 helper functions for preprocessing
+    │       `training_seq_n_12_rmrp0`                 training set for GradeNet ({'X': , 'Y': })
+    │       `dev_seq_n_12_rmrp0`                      validation set for GradeNet
+    │       `test_seq_n_12_rmrp0`                     test set for GradeNet
 
-│       `Step1_data_preprocessing_v2.ipynb`       step 1: 
-│       `Step2_BetaMove.ipynb`                    step 2: 
-│       `Step3_partition_train_test_set_v2.ipynb` step 3: 
-│
-├───`raw_data` raw data from moonboard
-│       `hold_features_2016.csv`          hold features for both hands? TODO: verify
-│       `hold_features_2016_LH.csv`       hold features for left hand
-│       `hold_features_2016_RH.csv`       hold features for right hand
-│       `holdIx_to_holdStr`               map of hold index to hold string (valid holds only)
-│       `holdStr_to_holdIx`               map of hold string to hold index (valid holds only)
-│       `moonboard2016Background.jpg`     MoonBoard 2016 board image
-│       `MoonBoard_2016_raw.json`         JSON form of `moonGen_scrape_2016_cp`
-│       `MoonBoard_2016_raw_schema.json`  Schema of `MoonBoard_2016_raw.json`
-│       `moonGen_scrape_2016`             Routes w/o hold info
-│       `moonGen_scrape_2016_cp`          Routes w/ hold info
-│       `moonGen_scrape_2016_fail`        Empty
-│       `moonGen_scrape_2016_final`       Routes w/ hold info (different schema)
+    │       `constants.py`                            constants used in preprocessing
+    │       `preprocessing_helper.py`                 helper functions for preprocessing
+
+    │       `Step1_data_preprocessing_v2.ipynb`       step 1: 
+    │       `Step2_BetaMove.ipynb`                    step 2: 
+    │       `Step3_partition_train_test_set_v2.ipynb` step 3: 
+    │
+    ├───`raw_data` raw data from moonboard
+    │       `hold_features_2016.csv`          hold features for both hands? TODO: verify
+    │       `hold_features_2016_LH.csv`       hold features for left hand
+    │       `hold_features_2016_RH.csv`       hold features for right hand
+    │       `holdIx_to_holdStr`               map of hold index to hold string (valid holds only)
+    │       `holdStr_to_holdIx`               map of hold string to hold index (valid holds only)
+    │       `moonboard2016Background.jpg`     MoonBoard 2016 board image
+    │       `MoonBoard_2016_raw.json`         JSON form of `moonGen_scrape_2016_cp`
+    │       `MoonBoard_2016_raw_schema.json`  Schema of `MoonBoard_2016_raw.json`
+    │       `moonGen_scrape_2016`             Routes w/o hold info
+    │       `moonGen_scrape_2016_cp`          Routes w/ hold info
+    │       `moonGen_scrape_2016_fail`        Empty
+    │       `moonGen_scrape_2016_final`       Routes w/ hold info (different schema)
 
 
 ### Improvements
